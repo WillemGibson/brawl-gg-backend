@@ -11,11 +11,13 @@ async function startServer() {
     // DECLARE THE HTTP SERVER FOR SOCKETS.IO
     const server = http.createServer(app);
 
-    // START LISTENING FOR EMITIONS WITH SOCKET.IO
+    // CREATE THE CONNECTION BETWEEN CLIENT AND SERVER START LISTENING FOR EMITIONS WITH SOCKET.IO
     socketConnect(server);
 
-    // START LISTENING FOR REQUESTS
+    // DECLARE THE PORT
     const PORT = process.env.PORT || 3001;
+
+    // START LISTENING FOR HTTP REQUESTS
     server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
