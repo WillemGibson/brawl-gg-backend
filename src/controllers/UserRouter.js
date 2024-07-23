@@ -8,8 +8,8 @@ router.get("/all", async (request, response, next) => {
   });
 });
 
-// GET ONE USER BODY REQUEST
-router.get("/", async (request, response, next) => {
+// GET ONE USER
+router.get("/:email", async (request, response, next) => {
   response.json({
     message: "User Router get one user",
   });
