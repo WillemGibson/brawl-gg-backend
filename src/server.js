@@ -10,23 +10,27 @@ app.use(cors());
 // ALLOWS JSON REQUESTS
 app.use(express.json());
 
-// ROUTES
+// -------------------ROUTES ------------------------- //
 
-// Home Route
+// HOME ROUTE
 app.get("/", (request, response, next) => {
   response.json({
-    message: "Hello World",
+    message: "Welcome to the Server :)",
   });
 });
 
-// 404 Handling Route
+// USER ROUTES
+const UserRouter = require("./controllers/UserRouter");
+app.use("/user", UserRouter);
+
+// 404 HANDLING ROUTE
 app.use((request, response) => {
   response.status(404).json({
     message: "404 Page Not Found!",
   });
 });
 
-// Error Handling Middleware
+// ERROR HANDLING MIDDLWARE
 app.use((error, request, response, next) => {
   console.error(error.stack); // Log the error stack for debugging
   response.status(error.status || 500).json({
@@ -35,7 +39,7 @@ app.use((error, request, response, next) => {
   });
 });
 
-// Exporting the app
+// EXPORT THE APP
 module.exports = {
   app,
 };
