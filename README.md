@@ -2,6 +2,33 @@
 
 ## Routes
 
+### Login
+
+    -------------------------------------------------------------------------
+
+    Endpoint name : User Login
+    Request type: POST
+    address: https://brawls.io/login/
+    Authorization header required: None required but (Optional Refresh Token)
+    Sample JSON:
+    {
+    "email": "ben@email.com.au",
+    "password": "Coderacademy1!",
+    }
+
+    -------------------------------------------------------------------------
+
+    Endpoint name : User Password reset
+    Request type: POST
+    address: https://brawls.io/login/password-reset
+    Authorization header required: None required
+    Sample JSON:
+    {
+    "email": "ben@email.com.au"
+    }
+
+    -------------------------------------------------------------------------
+
 ### User
 
     Endpoint name : Get All Users
