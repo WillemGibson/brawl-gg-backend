@@ -19,12 +19,16 @@ app.get("/", (request, response, next) => {
   });
 });
 
+// LOGIN ROUTE
+const LoginRouter = require("./controllers/LoginRouter");
+app.use("/login", LoginRouter);
+
 // USER ROUTES
 const UserRouter = require("./controllers/UserRouter");
 app.use("/user", UserRouter);
 
 // TOURNAMENT ROUTES
-const TournamentRouter = require("./controllers/TournamentController");
+const TournamentRouter = require("./controllers/TournamentRouter");
 app.use("/tournament", TournamentRouter);
 
 // 404 HANDLING ROUTE
