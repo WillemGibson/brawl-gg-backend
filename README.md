@@ -14,7 +14,7 @@
     Endpoint name : Get One User
     Request Type: GET
     address: 
-    http://brawls.io/user/
+    http://brawls.io/user/:email
     Authorization header required: JWT Created by User
     
 
@@ -22,7 +22,7 @@
 
     Endpoint name : Create User
     Request type: POST
-    address: https://brawls.io/user/:id
+    address: https://brawls.io/user/
     Authorization header required: None
     Sample JSON:
     {
@@ -57,6 +57,83 @@
     http://brawls.io/user/
     Authorization required: JWT Created by User
 
+### Tournaments
+
+    Endpoint name : Get All Torunaments
+    Request Type: GET
+    address: http://brawls.io/tournament/all
+    Authorization required: Admin user JWT Authurization
+
+    ------------------------------------------------------------------------
+
+    Endpoint name : Get All tournaments by one user
+    Request Type: GET
+    address: 
+    http://brawls.io/tournament/all/:id
+    Authorization header required: JWT Created by User
+    
+
+    -------------------------------------------------------------------------
+    
+    Endpoint name : Get One tournament
+    Request Type: GET
+    address: 
+    http://brawls.io/tournament/:id
+    Authorization header required: JWT Created by User
+    
+
+    -------------------------------------------------------------------------
+
+    Endpoint name : Create tournament
+    Request type: POST
+    address: https://brawls.io/tournament/
+    Authorization header required: Any JWT
+    Sample JSON:
+    {
+    tournamentName: "String",
+    author: "mongo Object",
+    Game: "String",
+    "gameType": "string",
+    "Description": "string",
+    "minimum players": int,
+    "maximum players": int,
+    "player stats": {},
+    password: "string,
+    "users": [],
+    "chats": "mongo Object"
+    }
+
+    -------------------------------------------------------------------------
+
+    
+    Endpoint name : Update Tournamet
+    Request type: PATCH
+    address: http://brawls.io/tournament/:id
+    Authorization required: JWT User that created tournament
+    Sample JSON:
+    {
+    "tournamentName": "String",
+    'author': "mongo Object",
+    "game": "String",
+    "gameType": "string",
+    "description": "string",
+    "minimum players": int,
+    "maximum players": int,
+    "player stats": {},
+    "password": "string,
+    "users": [],
+    "chats": "mongo Object"
+    }
+
+    Optional inputs = ["tournamentName", "author", "game", "gameType", "description", "min player", "max player", "player stats", "password", "users", "chats"]
+
+    ----------------------------------------------------------------------
+
+    Endpoint name : Delete Tournament
+    Request type: Delete
+    address: http://brawls.io/tournament/:id
+    Authorization required: JWT User that created tournament
+
 ## Schemas
 
 user {
@@ -77,6 +154,13 @@ chats {
 tournament {
     tournamentName,
     author,
+    Game,
+    gameType,
+    Description,
+    minimum players,
+    maximum players,
+    player stats,
+    password,
     users[],
     chats
 }

@@ -23,6 +23,10 @@ app.get("/", (request, response, next) => {
 const UserRouter = require("./controllers/UserRouter");
 app.use("/user", UserRouter);
 
+// TOURNAMENT ROUTES
+const TournamentRouter = require("./controllers/TournamentController");
+app.use("/tournament", TournamentRouter);
+
 // 404 HANDLING ROUTE
 app.use((request, response) => {
   response.status(404).json({
