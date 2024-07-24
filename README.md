@@ -1,5 +1,25 @@
 # brawl-gg-backend
 
+## JWT AUTHORIZATIONS
+
+### USER JWT
+
+    Created when the user logins into the web app. refreshed on every route hit by the user. has an expire of 30mins.
+    decodedData : {
+        userId: "mongoose OBJECT",
+        username: "string",
+        password: "string",
+        isAdmin: boolean
+    }
+
+### JOIN GAME JWT
+
+Created when a user creates a tournament and saved to the data base, is never refreshed. no expiry time.
+    decodedData : {
+        torunamentId: "mongoose OBJECT",
+        password: "string",
+    }
+
 ## Routes
 
 ### Login
@@ -111,6 +131,13 @@
 
     -------------------------------------------------------------------------
 
+    Endpoint name : Join a tournament
+    Request type: GET
+    address: https://brawls.io/tournament/join/:token
+    Authorization header required: Password and tournament id verification JWT
+
+    -------------------------------------------------------------------------
+
     Endpoint name : Create tournament
     Request type: POST
     address: https://brawls.io/tournament/
@@ -118,20 +145,20 @@
     Sample JSON:
     {
     tournamentName: "String",
-    author: "mongo Object",
+    author: "mongoose OBJECT",
     Game: "String",
     "gameType": "string",
     "Description": "string",
     "minimum players": int,
     "maximum players": int,
-    "player stats": {},
-    password: "string,
-    "users": [],
-    "chats": "mongo Object"
+    "player stats": ["mongoose OBJECT", "mongoose OBJECT"],
+    "password": "string,
+    "joinLink": "string",
+    "users": ["mongoose OBJECT", "mongoose OBJECT"],
+    "chats": ["mongoose OBJECT"],
     }
 
     -------------------------------------------------------------------------
-
     
     Endpoint name : Update Tournamet
     Request type: PATCH
@@ -140,16 +167,17 @@
     Sample JSON:
     {
     "tournamentName": "String",
-    'author': "mongo Object",
+    'author': "mongoose OBJECT",
     "game": "String",
     "gameType": "string",
     "description": "string",
     "minimum players": int,
     "maximum players": int,
-    "player stats": {},
-    "password": "string,
-    "users": [],
-    "chats": "mongo Object"
+    "player stats": ["mongoose OBJECT", "mongoose OBJECT"],
+    "password": "string",
+    "joinLink": "string",
+    "users": ["mongoose OBJECT", "mongoose OBJECT"],
+    "chats": ["mongoose OBJECT"]
     }
 
     Optional inputs = ["tournamentName", "author", "game", "gameType", "description", "min player", "max player", "player stats", "password", "users", "chats"]
@@ -168,6 +196,7 @@ user {
     email,
     password,
     profile image,
+    tournaments,
     isAdmin (An Admin can only be created by another admin)
 }
 
@@ -186,10 +215,11 @@ tournament {
     Description,
     minimum players,
     maximum players,
-    player stats,
+    player stats[{}, {}],
     password,
+    joinLink,
     users[],
-    chats
+    chats[],
 }
 
 ## Dependancies

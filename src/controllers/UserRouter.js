@@ -1,6 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
+// JWT AUTHORIZATION FUNCTIONS
+const { userValidateJWTAndRefreshIt } = require("../utils/JWT/userJWT");
+
+//-----------------------  ROUTES ------------------------  //
+
 // GET ALL USERS
 router.get("/all", async (request, response, next) => {
   response.json({
