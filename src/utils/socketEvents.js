@@ -26,7 +26,7 @@ async function handleJoinTournament(socket, tournamentId) {
 
     // Include usernames in messages
     const messagesWithUsernames = messages.map((msg) => ({
-      ...msg.toObject(), // Convert Mongoose document to plain object
+      ...msg.toObject(), // Convert Mongoose document to object
       username: userMap[msg.userId.toString()] || "Unknown User", // Add username or default to "Unknown User"
     }));
 
