@@ -14,7 +14,7 @@ router.get("/all", async (request, response, next) => {
 });
 
 // GET ONE USER
-router.get("/:email", async (request, response, next) => {
+router.get("/:id", async (request, response, next) => {
   response.json({
     message: "User Router get one user",
   });
