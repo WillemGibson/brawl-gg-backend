@@ -10,8 +10,8 @@ const {
 //-----------------------  ROUTES ------------------------  //
 
 // USER LOGIN
-router.post("/login", async (request, response, next) => {
-  const userJwt = createUserJWT({ username: ben, userId: 1 });
+router.post("/", async (request, response, next) => {
+  const userJwt = createUserJWT({ username: "ben", userId: 1 });
   response.json({
     message: "This is the user login route",
     jwt: userJwt,
