@@ -14,7 +14,7 @@
 
 ### JOIN GAME JWT
 
-Created when a user creates a tournament and saved to the data base, is never refreshed. no expiry time.
+    Created when a user creates a tournament and saved to the data base, is never refreshed. no expiry time.
     decodedData : {
         torunamentId: "mongoose OBJECT",
         password: "string",
@@ -24,12 +24,10 @@ Created when a user creates a tournament and saved to the data base, is never re
 
 ### Login
 
-    -------------------------------------------------------------------------
-
     Endpoint name : User Login
     Request type: POST
-    address: https://brawls.io/login/
-    Authorization header required: None required but (Optional Refresh Token)
+    address: https://brawl-gg-backend.onrender.com/login/
+    Authorization header required: None required
     Sample JSON:
     {
     "email": "ben@email.com.au",
@@ -40,7 +38,7 @@ Created when a user creates a tournament and saved to the data base, is never re
 
     Endpoint name : User Password reset
     Request type: POST
-    address: https://brawls.io/login/password-reset
+    address: https://brawl-gg-backend.onrender.com/login/password-reset
     Authorization header required: None required
     Sample JSON:
     {
@@ -53,7 +51,7 @@ Created when a user creates a tournament and saved to the data base, is never re
 
     Endpoint name : Get All Users
     Request Type: GET
-    address: http://brawls.io/user/all
+    address: https://brawl-gg-backend.onrender.com/user/all
     Authorization required: Admin user JWT Authurization
 
     ------------------------------------------------------------------------
@@ -61,7 +59,7 @@ Created when a user creates a tournament and saved to the data base, is never re
     Endpoint name : Get One User
     Request Type: GET
     address: 
-    http://brawls.io/user/:email
+    https://brawl-gg-backend.onrender.com/user/:email
     Authorization header required: JWT Created by User
     
 
@@ -69,7 +67,7 @@ Created when a user creates a tournament and saved to the data base, is never re
 
     Endpoint name : Create User
     Request type: POST
-    address: https://brawls.io/user/
+    address: https://brawl-gg-backend.onrender.com/user/
     Authorization header required: None
     Sample JSON:
     {
@@ -84,7 +82,7 @@ Created when a user creates a tournament and saved to the data base, is never re
     
     Endpoint name : Update User
     Request type: PATCH
-    address: http://brawls.io/user/
+    address: https://brawl-gg-backend.onrender.com/user/
     Authorization required: JWT Created by User
     Sample JSON:
     {
@@ -101,14 +99,14 @@ Created when a user creates a tournament and saved to the data base, is never re
     Endpoint name : Delete User
     Request type: Delete
     address: 
-    http://brawls.io/user/
+    https://brawl-gg-backend.onrender.com/user/
     Authorization required: JWT Created by User
 
 ### Tournaments
 
     Endpoint name : Get All Torunaments
     Request Type: GET
-    address: http://brawls.io/tournament/all
+    address: https://brawl-gg-backend.onrender.com/tournament/all
     Authorization required: Admin user JWT Authurization
 
     ------------------------------------------------------------------------
@@ -116,7 +114,7 @@ Created when a user creates a tournament and saved to the data base, is never re
     Endpoint name : Get All tournaments by one user
     Request Type: GET
     address: 
-    http://brawls.io/tournament/all/:id
+    https://brawl-gg-backend.onrender.com/all/:id
     Authorization header required: JWT Created by User
     
 
@@ -125,7 +123,7 @@ Created when a user creates a tournament and saved to the data base, is never re
     Endpoint name : Get One tournament
     Request Type: GET
     address: 
-    http://brawls.io/tournament/:id
+    https://brawl-gg-backend.onrender.com/tournament/:id
     Authorization header required: JWT Created by User
     
 
@@ -133,14 +131,14 @@ Created when a user creates a tournament and saved to the data base, is never re
 
     Endpoint name : Join a tournament
     Request type: GET
-    address: https://brawls.io/tournament/join/:token
+    address: https://brawl-gg-backend.onrender.com/tournament/join/:token
     Authorization header required: Password and tournament id verification JWT
 
     -------------------------------------------------------------------------
 
     Endpoint name : Create tournament
     Request type: POST
-    address: https://brawls.io/tournament/
+    address: https://brawl-gg-backend.onrender.com/tournament/
     Authorization header required: Any JWT
     Sample JSON:
     {
@@ -162,7 +160,7 @@ Created when a user creates a tournament and saved to the data base, is never re
     
     Endpoint name : Update Tournamet
     Request type: PATCH
-    address: http://brawls.io/tournament/:id
+    address: https://brawl-gg-backend.onrender.com/tournament/:id
     Authorization required: JWT User that created tournament
     Sample JSON:
     {
@@ -186,7 +184,7 @@ Created when a user creates a tournament and saved to the data base, is never re
 
     Endpoint name : Delete Tournament
     Request type: Delete
-    address: http://brawls.io/tournament/:id
+    address: https://brawl-gg-backend.onrender.com/tournament/:id
     Authorization required: JWT User that created tournament
 
 ## Schemas
