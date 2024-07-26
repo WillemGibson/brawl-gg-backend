@@ -19,7 +19,7 @@ const oAuth2Client = new google.auth.OAuth2(
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 // DECLARE THE SEND EMAIL FUNCTION WITH EMAIL RECIPIENT, MORE INFORMATION CAN BE PASSED SUCH AS TEMPLATES OR ATTACHMENTS, ETC.
-const sendEmail = async (emailRecipient) => {
+const sendEmail = async (emailRecipient, template, recoveryCode) => {
   try {
     // GET THE ACCESS TOKEN TO USE YOUR EMAIL
     const ACCESS_TOKEN = await oAuth2Client.getAccessToken();
@@ -44,22 +44,38 @@ const sendEmail = async (emailRecipient) => {
     });
 
     // EMAIL DATA TO SEND TO THE RECEIVING EMAIL
-    const mailOptions = {
-      from: MY_EMAIL,
-      to: emailRecipient,
-      subject: "New email from your API",
-      html: `
-        <p>Hey ${emailRecipient},</p>
-        <p>Thanks for using my API</p>
-        <p>ENJOY!</p>
-      `,
-    };
+    let mailOptions = {};
+    if (template === "welcome") {
+      mailOptions = {
+        from: MY_EMAIL,
+        to: emailRecipient,
+        subject: "Welcome to brawl.gg",
+        html: `
+          <p>Hey ${emailRecipient},</p>
+          <p>Thanks for signing up to brawl.gg</p>
+          <p>ENJOY!</p>
+        `,
+      };
+    } else {
+      mailOptions = {
+        from: MY_EMAIL,
+        to: emailRecipient,
+        subject: "Password recovey",
+        html: `
+          <p>Hey ${emailRecipient},</p>
+          <p>Your recovery code is: <strong>${recoveryCode}</strong></p>
+          <p>This code is only valid for 15 minutes.</p>
+        `,
+      };
+    }
 
     // SEND EMAIL AND HANDLE ANY ERRORS
-    return await transport.sendMail(mailOptions);
+    await transport.sendMail(mailOptions);
+
+    return "Recovery email sent";
   } catch (error) {
     console.error("Error occurred while sending email:", error);
-    throw new Error("Failed to send email: " + error.message);
+    return null;
   }
 };
 
