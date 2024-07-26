@@ -26,7 +26,7 @@
 
     Endpoint name : User Login
     Request type: POST
-    address: https://brawl-gg-backend.onrender.com/login/
+    address: https://brawl-gg-backend.onrender.com/login
     Authorization header required: None required
     Sample JSON:
     {
@@ -36,7 +36,7 @@
 
     -------------------------------------------------------------------------
 
-    Endpoint name : User Password reset
+    Endpoint name : User Check email for password to be reset
     Request type: POST
     address: https://brawl-gg-backend.onrender.com/login/password-reset
     Authorization header required: None required
@@ -47,14 +47,27 @@
 
     -------------------------------------------------------------------------
 
-    Endpoint name : Check recovery passcode
+    Endpoint name : Check users recovery passcode
     Request type: POST
     address: https://brawl-gg-backend.onrender.com/login/check-passcode
     Authorization header required: None required
     Sample JSON:
     {
+    "recoveryId": "Mongoose Object ID",
+    "passcode": "123456",
+    }
+
+    -------------------------------------------------------------------------
+
+    Endpoint name : Set new password for the user
+    Request type: POST
+    address: https://brawl-gg-backend.onrender.com/login/new-password
+    Authorization header required: None required
+    Sample JSON:
+    {
     "email": "ben@email.com.au",
     "passcode": "123456",
+    "newPassword": "A1Coder!"
     }
 
     -------------------------------------------------------------------------
@@ -70,16 +83,16 @@
 
     Endpoint name : Get One User
     Request Type: GET
-    address: 
+    address:
     https://brawl-gg-backend.onrender.com/user/:email
     Authorization header required: JWT Created by User
-    
+
 
     -------------------------------------------------------------------------
 
     Endpoint name : Create User
     Request type: POST
-    address: https://brawl-gg-backend.onrender.com/user/
+    address: https://brawl-gg-backend.onrender.com/user
     Authorization header required: None
     Sample JSON:
     {
@@ -91,10 +104,10 @@
 
     -------------------------------------------------------------------------
 
-    
+
     Endpoint name : Update User
     Request type: PATCH
-    address: https://brawl-gg-backend.onrender.com/user/
+    address: https://brawl-gg-backend.onrender.com/user
     Authorization required: JWT Created by User
     Sample JSON:
     {
@@ -110,8 +123,8 @@
 
     Endpoint name : Delete User
     Request type: Delete
-    address: 
-    https://brawl-gg-backend.onrender.com/user/
+    address:
+    https://brawl-gg-backend.onrender.com/user
     Authorization required: JWT Created by User
 
 ### Tournaments
@@ -125,19 +138,19 @@
 
     Endpoint name : Get All tournaments by one user
     Request Type: GET
-    address: 
+    address:
     https://brawl-gg-backend.onrender.com/all/:id
     Authorization header required: JWT Created by User
-    
+
 
     -------------------------------------------------------------------------
-    
+
     Endpoint name : Get One tournament
     Request Type: GET
-    address: 
+    address:
     https://brawl-gg-backend.onrender.com/tournament/:id
     Authorization header required: JWT Created by User
-    
+
 
     -------------------------------------------------------------------------
 
@@ -150,7 +163,7 @@
 
     Endpoint name : Create tournament
     Request type: POST
-    address: https://brawl-gg-backend.onrender.com/tournament/
+    address: https://brawl-gg-backend.onrender.com/tournament
     Authorization header required: Any JWT
     Sample JSON:
     {
@@ -169,7 +182,7 @@
     }
 
     -------------------------------------------------------------------------
-    
+
     Endpoint name : Update Tournamet
     Request type: PATCH
     address: https://brawl-gg-backend.onrender.com/tournament/:id
@@ -202,34 +215,40 @@
 ## Schemas
 
 user {
-    username,
-    email,
-    password,
-    profile image,
-    tournaments,
-    isAdmin (An Admin can only be created by another admin)
+username,
+email,
+password,
+profile image,
+tournaments,
+isAdmin (An Admin can only be created by another admin)
+}
+
+userPasswordRecovery {
+userEmail,
+passcode,
+createdAt,
 }
 
 chats {
-    message,
-    userId,
-    TournamentId,
-    CreatedAt
+message,
+userId,
+TournamentId,
+CreatedAt
 }
 
 tournament {
-    tournamentName,
-    author,
-    Game,
-    gameType,
-    Description,
-    minimum players,
-    maximum players,
-    player stats[{}, {}],
-    password,
-    joinLink,
-    users[],
-    chats[],
+tournamentName,
+author,
+Game,
+gameType,
+Description,
+minimum players,
+maximum players,
+player stats[{}, {}],
+password,
+joinLink,
+users[],
+chats[],
 }
 
 ## Dependancies
