@@ -47,6 +47,18 @@
 
     -------------------------------------------------------------------------
 
+    Endpoint name : Check recovery passcode
+    Request type: POST
+    address: https://brawl-gg-backend.onrender.com/login/check-passcode
+    Authorization header required: None required
+    Sample JSON:
+    {
+    "email": "ben@email.com.au",
+    "passcode": "123456",
+    }
+
+    -------------------------------------------------------------------------
+
 ### User
 
     Endpoint name : Get All Users
@@ -231,3 +243,4 @@ tournament {
 - nodemailer
 - socket.io
 - jsonwebtoken
+- bcryptjs
