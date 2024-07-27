@@ -2,13 +2,13 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const createUserJWT = (userDetailsToEncrypt) => {
+function createUserJWT(userDetailsToEncrypt) {
   return jwt.sign(userDetailsToEncrypt, process.env.USER_JWT_SECRET, {
     expiresIn: "30m",
   });
-};
+}
 
-const userValidateJWTAndRefreshIt = (request, response, next) => {
+function userValidateJWTAndRefreshIt(request, response, next) {
   let suppliedToken = request.headers.jwt;
   console.log(suppliedToken);
 
@@ -37,7 +37,7 @@ const userValidateJWTAndRefreshIt = (request, response, next) => {
   );
 
   next();
-};
+}
 
 module.exports = {
   createUserJWT,

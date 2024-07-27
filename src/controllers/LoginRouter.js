@@ -8,10 +8,10 @@ const {
 } = require("../models/UserPasswordRecoveryModel");
 
 // PASSWORD COMPARISON FUNCTION
-const { comparePassword } = require("../utils/verifyUserPassword");
+const { comparePasswords } = require("../utils/verifyUserPassword");
 
 // JWT AUTHORIZATION FUNCTIONS
-const { createUserJwt } = require("../utils/JWT/userJWT");
+const { createUserJWT } = require("../utils/JWT/userJWT");
 
 // SEND EMAIL FUNCTION
 const { sendEmail } = require("../utils/sendEmail");
@@ -21,38 +21,40 @@ const { sendEmail } = require("../utils/sendEmail");
 // USER LOGIN
 router.post("/", async (request, response, next) => {
   try {
-    console.log("body is:");
-    console.log(request.body);
+    const { email, password } = request.body;
 
     // CHECK IF THE BODY REQUEST HAS THE REQUIRED DATA
-    if (!request.body.password || !request.body.email) {
+    if (!email || !password) {
       return response
         .status(400)
-        .json({ error: "Missing details in body request." });
+        .json({ error: "Email and password are required." });
     }
 
     // SEARCH FOR USER DOCUMENT BY EMAIL
-    const foundUser = await UserModel.findOne({
-      email: request.body.email,
-    }).exec();
+    const foundUser = await UserModel.findOne({ email }).exec();
     if (!foundUser) {
-      return response.status(404).json({ error: "User not found." });
+      return response.status(401).json({ error: "Invalid credentials." });
     }
 
-    // CHECK THE USERS HASHED PASSWORD
-    const isPasswordCorrect = await comparePassword(
-      request.body.password,
+    // CHECK THE USER'S HASHED PASSWORD
+    const isPasswordCorrect = await comparePasswords(
+      password,
       foundUser.password
     );
     if (!isPasswordCorrect) {
-      return response.status(401).json({ error: "Incorrect password." });
+      return response.status(401).json({ error: "Invalid credentials." });
     }
 
     // CREATE A JWT FOR THE USER
-    const newJwt = createUserJwt(foundUser._id);
-    response.status(200).json({ jwt: newJwt });
+    const newJwt = createUserJWT({ userId: foundUser._id });
+    return response
+      .status(200)
+      .json({ username: foundUser.username, jwt: newJwt });
   } catch (error) {
     console.error("Error in user login route:", error);
+    return response
+      .status(500)
+      .json({ error: "Internal server error. Please try again." });
     next(error);
   }
 });
