@@ -22,6 +22,21 @@
 
 ## Routes
 
+### Signup
+
+    Endpoint name : new user signup
+    Request type: POST
+    address: https://brawl-gg-backend.onrender.com/signup
+    Authorization header required: None required
+    Sample JSON:
+    {
+    "username": "username",
+    "email": "ben@email.com.au",
+    "password": "Coderacademy1!",
+    }
+
+    -------------------------------------------------------------------------
+
 ### Login
 
     Endpoint name : User Login

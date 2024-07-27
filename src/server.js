@@ -20,6 +20,10 @@ app.get("/", (request, response, next) => {
 });
 
 // LOGIN ROUTE
+const SignupRouter = require("./controllers/SignupRouter");
+app.use("/signup", SignupRouter);
+
+// LOGIN ROUTE
 const LoginRouter = require("./controllers/LoginRouter");
 app.use("/login", LoginRouter);
 
