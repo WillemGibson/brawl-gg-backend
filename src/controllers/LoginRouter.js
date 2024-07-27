@@ -11,72 +11,73 @@ const {
 const { comparePassword } = require("../utils/verifyUserPassword");
 
 // JWT AUTHORIZATION FUNCTIONS
-const { createUserJWT } = require("../utils/JWT/userJWT");
+const { createUserJwt } = require("../utils/JWT/userJWT");
 
 // SEND EMAIL FUNCTION
 const { sendEmail } = require("../utils/sendEmail");
-const { Mongoose } = require("mongoose");
 
-//-----------------------  ROUTES ------------------------  //
+//-----------------------  ROUTES ------------------------//
 
 // USER LOGIN
 router.post("/", async (request, response, next) => {
   try {
     console.log("body is:");
     console.log(request.body);
+
     // CHECK IF THE BODY REQUEST HAS THE REQUIRED DATA
     if (!request.body.password || !request.body.email) {
-      return next(new Error("Missing login details in login request."));
+      return response
+        .status(400)
+        .json({ error: "Missing details in body request." });
     }
 
     // SEARCH FOR USER DOCUMENT BY EMAIL
     const foundUser = await UserModel.findOne({
       email: request.body.email,
     }).exec();
+    if (!foundUser) {
+      return response.status(404).json({ error: "User not found." });
+    }
 
     // CHECK THE USERS HASHED PASSWORD
     const isPasswordCorrect = await comparePassword(
       request.body.password,
       foundUser.password
     );
+    if (!isPasswordCorrect) {
+      return response.status(401).json({ error: "Incorrect password." });
+    }
 
     // CREATE A JWT FOR THE USER
-    let newJwt = "";
-    if (isPasswordCorrect) {
-      newJwt = createJwt(foundUser._id);
-
-      response.json({
-        jwt: newJwt,
-      });
-    } else {
-      return next(new Error("Incorrect password."));
-    }
+    const newJwt = createUserJwt(foundUser._id);
+    response.status(200).json({ jwt: newJwt });
   } catch (error) {
-    console.error("Error in password reset route:", error);
+    console.error("Error in user login route:", error);
     next(error);
   }
 });
 
 // USER FORGET PASSWORD
-router.post("/password-reset", async (req, res, next) => {
+router.post("/password-reset", async (request, response, next) => {
   try {
-    const { email } = req.body;
+    const { email } = request.body;
 
     if (!email) {
-      return next(new Error("Missing email in request"));
+      return response
+        .status(400)
+        .json({ error: "Missing details in body request." });
     }
 
     const foundUser = await UserModel.findOne({ email }).exec();
-
     if (!foundUser) {
-      return res.status(404).json({ message: "Email not found" });
+      return response.status(404).json({ error: "User not found." });
     }
 
     // Generate a random recovery code
     const recoveryCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Create a new recovery request
-    let recoveryId = await UserPasswordRecoveryModel.create({
+    const recoveryId = await UserPasswordRecoveryModel.create({
       userId: foundUser._id,
       passcode: recoveryCode,
     });
@@ -87,14 +88,13 @@ router.post("/password-reset", async (req, res, next) => {
       "password-reset",
       recoveryCode
     );
-
     if (!mailResponse) {
-      return next(
-        new Error("Password recovery email failed. Please contact support.")
-      );
+      return response.status(500).json({
+        error: "Password recovery email failed. Please contact support.",
+      });
     }
 
-    res.status(200).json({
+    response.status(200).json({
       message: "Password recovery passcode sent",
       mailResponse,
       recoveryId: recoveryId._id,
@@ -108,21 +108,35 @@ router.post("/password-reset", async (req, res, next) => {
 // CHECK THE RECOVERY CODE
 router.post("/check-recovery-code", async (request, response, next) => {
   try {
-    console.log("body is:");
-    console.log(request.body);
+    const { recoveryId, passcode } = request.body;
 
-    // SEARCH FOR USER PASSWORD RECOVERY DOCUMENT BY EMAIL
+    if (!recoveryId || !passcode) {
+      return response
+        .status(400)
+        .json({ error: "Missing details in body request." });
+    }
 
-    // CHECK THE USERS HASHED PASSWORD
+    // SEARCH FOR USER PASSWORD RECOVERY DOCUMENT BY ID
+    const foundUserPasscode = await UserPasswordRecoveryModel.findById(
+      recoveryId
+    ).exec();
+    if (!foundUserPasscode) {
+      return response
+        .status(404)
+        .json({ error: "Recovery ID not found or expired." });
+    }
 
-    // CREATE A JWT FOR THE USER
+    // CHECK THE USERS PASSCODE MATCHES
+    if (passcode !== foundUserPasscode.passcode) {
+      return response.status(401).json({ error: "Incorrect passcode." });
+    }
 
     response.status(200).json({
-      message: "User router operation",
+      message: "Passcode correct",
       bodyData: request.body,
     });
   } catch (error) {
-    console.error("Error in password reset route:", error);
+    console.error("Error in check recovery code route:", error);
     next(error);
   }
 });
@@ -133,18 +147,46 @@ router.post("/new-password", async (request, response, next) => {
     console.log("body is:");
     console.log(request.body);
 
-    // SEARCH FOR USER PASSWORD RECOVERY DOCUMENT BY EMAIL
+    const { email, recoveryId, passcode, newPassword } = request.body;
+
+    if (!email || !recoveryId || !passcode || !newPassword) {
+      return response
+        .status(400)
+        .json({ error: "Missing details in body request." });
+    }
+
+    // SEARCH FOR USER PASSWORD RECOVERY DOCUMENT BY ID
+    const foundUserPasscode = await UserPasswordRecoveryModel.findById(
+      recoveryId
+    ).exec();
+    if (!foundUserPasscode) {
+      return response
+        .status(404)
+        .json({ error: "Recovery ID not found or expired." });
+    }
+
+    // CHECK THE USERS PASSCODE MATCHES
+    if (passcode !== foundUserPasscode.passcode) {
+      return response.status(401).json({ error: "Incorrect passcode." });
+    }
 
     // UPDATE THE PASSWORD FOR THE USER
+    const updateUserPassword = await UserModel.updateOne(
+      { email },
+      { password: newPassword }
+    ).exec();
 
-    // CREATE A JWT FOR THE USER
+    if (!updateUserPassword) {
+      return response
+        .status(500)
+        .json({ error: "Password update failed. Please contact support." });
+    }
 
-    response.status(203).response({
-      message: "User updated there password router operation",
-      bodyData: request.body,
+    response.status(200).json({
+      message: "Password updated successfully.",
     });
   } catch (error) {
-    console.error("Error in password reset route:", error);
+    console.error("Error in new password route:", error);
     next(error);
   }
 });

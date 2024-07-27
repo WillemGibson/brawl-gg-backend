@@ -66,6 +66,7 @@
     Sample JSON:
     {
     "email": "ben@email.com.au",
+    "recoveryId": "Mongoose Object ID",
     "passcode": "123456",
     "newPassword": "A1Coder!"
     }
