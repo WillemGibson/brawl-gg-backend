@@ -34,7 +34,7 @@
     "email": "ben@email.com.au",
     "password": "Coderacademy1!",
     }
-
+    Exspected response data = {successful account creation message}
     -------------------------------------------------------------------------
 
 ### Login
@@ -49,6 +49,8 @@
     "password": "Coderacademy1!",
     }
 
+    Exspected response data = {username, JWT}
+
     -------------------------------------------------------------------------
 
     Endpoint name : User Check email for password to be reset
@@ -59,6 +61,8 @@
     {
     "email": "ben@email.com.au"
     }
+
+    Exspected response data = {recoveryID}
 
     -------------------------------------------------------------------------
 
@@ -71,6 +75,8 @@
     "recoveryId": "Mongoose Object ID",
     "passcode": "123456",
     }
+
+    Exspected response data = {Suceesfully verification of passcode}
 
     -------------------------------------------------------------------------
 
@@ -85,6 +91,8 @@
     "passcode": "123456",
     "newPassword": "A1Coder!"
     }
+
+    Exspected response data = {successful user password changed}
 
     -------------------------------------------------------------------------
 

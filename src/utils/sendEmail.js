@@ -1,6 +1,7 @@
+const dotenv = require("dotenv");
 const { google } = require("googleapis");
 const nodemailer = require("nodemailer");
-
+dotenv.config();
 /* POPULATE BELOW FIELDS WITH YOUR CREDENTIALS */
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -19,7 +20,12 @@ const oAuth2Client = new google.auth.OAuth2(
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 // DECLARE THE SEND EMAIL FUNCTION WITH EMAIL RECIPIENT, MORE INFORMATION CAN BE PASSED SUCH AS TEMPLATES OR ATTACHMENTS, ETC.
-const sendEmail = async (emailRecipient, template, recoveryCode) => {
+const sendEmail = async (
+  emailRecipient,
+  template,
+  recoveryCode,
+  recipientUsername
+) => {
   try {
     // GET THE ACCESS TOKEN TO USE YOUR EMAIL
     const ACCESS_TOKEN = await oAuth2Client.getAccessToken();
@@ -51,9 +57,21 @@ const sendEmail = async (emailRecipient, template, recoveryCode) => {
         to: emailRecipient,
         subject: "Welcome to brawl.gg",
         html: `
-          <p>Hey ${emailRecipient},</p>
-          <p>Thanks for signing up to brawl.gg</p>
-          <p>ENJOY!</p>
+          <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333333; background-color: #f4f4f4; padding: 20px;">
+
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+              <tr>
+                <td style="padding: 20px;">
+                  <h1 style="color: #007BFF; text-align: center;">Welcome to brawl.gg!</h1>
+                  <p style="font-size: 16px;">Hey <strong>${recipientUsername}</strong>,</p>
+                  <p style="font-size: 16px;">Thanks for signing up to brawl.gg. We're excited to have you on board and can't wait for you to explore all the exciting features we offer.</p>
+                  <p style="font-size: 16px;">Enjoy!</p>
+                  <p style="font-size: 16px;">The brawl.gg Team</p>
+                </td>
+              </tr>
+            </table>
+
+          </body>
         `,
       };
     } else {
@@ -68,6 +86,8 @@ const sendEmail = async (emailRecipient, template, recoveryCode) => {
         `,
       };
     }
+
+    console.log("Mail Options:", mailOptions);
 
     // SEND EMAIL AND HANDLE ANY ERRORS
     await transport.sendMail(mailOptions);
