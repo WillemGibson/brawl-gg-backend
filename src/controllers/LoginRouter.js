@@ -73,7 +73,7 @@ const passwordResetValidationRules = [
 ];
 
 router.post(
-  "/password-reset",
+  "/forgot-password",
   passwordResetValidationRules,
   async (request, response, next) => {
     const errors = validationResult(request);
