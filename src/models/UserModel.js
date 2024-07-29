@@ -6,6 +6,7 @@ const UserSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
+      unique: true,
     },
     email: {
       type: String,
@@ -15,21 +16,25 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      unique: false,
     },
     profileImage: {
       type: String,
       required: false,
+      unique: false,
     },
     tournaments: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tournament",
+        unique: false,
       },
     ],
     isAdmin: {
       type: Boolean,
       required: true,
       default: false,
+      unique: false,
     },
   },
   {
@@ -39,20 +44,15 @@ const UserSchema = new mongoose.Schema(
 
 UserSchema.pre("save", async function (next) {
   const user = this;
-  console.log("pre-save hook running");
 
   if (!user.isModified("password")) {
     return next();
   }
 
-  console.log(this.password);
-
   // TODO: encryption
   const hash = await bcrypt.hash(this.password, 10);
 
   this.password = hash;
-
-  console.log(hash);
 
   next();
 });
