@@ -80,7 +80,7 @@ const sendEmail = async (
         to: emailRecipient,
         subject: "Password recovey",
         html: `
-          <p>Hey ${emailRecipient},</p>
+          <p>Hey ${recipientUsername},</p>
           <p>Your recovery code is: <strong>${recoveryCode}</strong></p>
           <p>This code is only valid for 15 minutes.</p>
         `,
