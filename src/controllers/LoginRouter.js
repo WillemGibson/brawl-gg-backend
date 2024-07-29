@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { check, validationResult } = require("express-validator");
 
 // MONGOOSE MODELS
 const { UserModel } = require("../models/UserModel");
@@ -19,16 +20,23 @@ const { sendEmail } = require("../utils/sendEmail");
 //-----------------------  ROUTES ------------------------//
 
 // USER LOGIN
-router.post("/", async (request, response, next) => {
+const loginValidationRules = [
+  check("email").isEmail().withMessage("Invalid email address"),
+  check("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long"),
+];
+
+router.post("/", loginValidationRules, async (request, response, next) => {
+  const errors = validationResult(request);
+  if (!errors.isEmpty()) {
+    return response.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const { email, password } = request.body;
-
-    // CHECK IF THE BODY REQUEST HAS THE REQUIRED DATA
-    if (!email || !password) {
-      return response
-        .status(400)
-        .json({ error: "Email and password are required." });
-    }
 
     // SEARCH FOR USER DOCUMENT BY EMAIL
     const foundUser = await UserModel.findOne({ email }).exec();
@@ -60,137 +68,185 @@ router.post("/", async (request, response, next) => {
 });
 
 // USER FORGET PASSWORD
-router.post("/password-reset", async (request, response, next) => {
-  try {
-    const { email } = request.body;
+const passwordResetValidationRules = [
+  check("email").isEmail().withMessage("Invalid email address"),
+];
 
-    if (!email) {
-      return response
-        .status(400)
-        .json({ error: "Missing details in body request." });
+router.post(
+  "/forgot-password",
+  passwordResetValidationRules,
+  async (request, response, next) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
     }
 
-    const foundUser = await UserModel.findOne({ email }).exec();
-    if (!foundUser) {
-      return response.status(404).json({ error: "User not found." });
-    }
+    try {
+      const { email } = request.body;
 
-    // Generate a random recovery code
-    const recoveryCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const foundUser = await UserModel.findOne({ email }).exec();
+      if (!foundUser) {
+        return response.status(404).json({ error: "User not found." });
+      }
 
-    // Create a new recovery request
-    const recoveryId = await UserPasswordRecoveryModel.create({
-      userId: foundUser._id,
-      passcode: recoveryCode,
-    });
+      // Generate a random recovery code
+      const recoveryCode = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
 
-    // Send the recovery email
-    const mailResponse = await sendEmail(
-      foundUser.email,
-      "password-reset",
-      recoveryCode
-    );
-    if (!mailResponse) {
-      return response.status(500).json({
-        error: "Password recovery email failed. Please contact support.",
+      // Create a new recovery request
+      const recoveryId = await UserPasswordRecoveryModel.create({
+        userId: foundUser._id,
+        passcode: recoveryCode,
       });
-    }
 
-    response.status(200).json({
-      message: "Password recovery passcode sent",
-      mailResponse,
-      recoveryId: recoveryId._id,
-    });
-  } catch (error) {
-    console.error("Error in password reset route:", error);
-    next(error);
+      // Send the recovery email
+      const mailResponse = await sendEmail(
+        foundUser.email,
+        "password-reset",
+        recoveryCode,
+        foundUser.username
+      );
+      if (!mailResponse) {
+        return response.status(500).json({
+          error: "Password recovery email failed. Please contact support.",
+        });
+      }
+
+      response.status(200).json({
+        message: "Password recovery passcode sent",
+        mailResponse,
+        recoveryId: recoveryId._id,
+      });
+    } catch (error) {
+      console.error("Error in password reset route:", error);
+      next(error);
+    }
   }
-});
+);
 
 // CHECK THE RECOVERY CODE
-router.post("/check-recovery-code", async (request, response, next) => {
-  try {
-    const { recoveryId, passcode } = request.body;
+const checkRecoveryCodeValidationRules = [
+  check("recoveryId")
+    .notEmpty()
+    .withMessage("Recovery ID is required")
+    .isString()
+    .withMessage("Recovery ID must be a string"),
+  check("passcode")
+    .notEmpty()
+    .withMessage("Passcode is required")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("Passcode must be 6 characters long"),
+];
 
-    if (!recoveryId || !passcode) {
-      return response
-        .status(400)
-        .json({ error: "Missing details in body request." });
+router.post(
+  "/check-recovery-code",
+  checkRecoveryCodeValidationRules,
+  async (request, response, next) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
     }
 
-    // SEARCH FOR USER PASSWORD RECOVERY DOCUMENT BY ID
-    const foundUserPasscode = await UserPasswordRecoveryModel.findById(
-      recoveryId
-    ).exec();
-    if (!foundUserPasscode) {
-      return response
-        .status(404)
-        .json({ error: "Recovery ID not found or expired." });
-    }
+    try {
+      const { recoveryId, passcode } = request.body;
 
-    // CHECK THE USERS PASSCODE MATCHES
-    if (passcode !== foundUserPasscode.passcode) {
-      return response.status(401).json({ error: "Incorrect passcode." });
-    }
+      // SEARCH FOR USER PASSWORD RECOVERY DOCUMENT BY ID
+      const foundUserPasscode = await UserPasswordRecoveryModel.findById(
+        recoveryId
+      ).exec();
+      if (!foundUserPasscode) {
+        return response
+          .status(404)
+          .json({ error: "Recovery ID not found or expired." });
+      }
 
-    response.status(200).json({
-      message: "Passcode correct",
-      bodyData: request.body,
-    });
-  } catch (error) {
-    console.error("Error in check recovery code route:", error);
-    next(error);
+      // CHECK THE USERS PASSCODE MATCHES
+      if (passcode !== foundUserPasscode.passcode) {
+        return response.status(401).json({ error: "Incorrect passcode." });
+      }
+
+      response.status(200).json({
+        message: "Passcode correct",
+        bodyData: request.body,
+      });
+    } catch (error) {
+      console.error("Error in check recovery code route:", error);
+      next(error);
+    }
   }
-});
+);
 
 // SET A NEW PASSWORD FOR THE USER
-router.post("/new-password", async (request, response, next) => {
-  try {
-    console.log("body is:");
-    console.log(request.body);
+const newPasswordValidationRules = [
+  check("email").isEmail().withMessage("Invalid email address"),
+  check("recoveryId")
+    .notEmpty()
+    .withMessage("Recovery ID is required")
+    .isString()
+    .withMessage("Recovery ID must be a string"),
+  check("passcode")
+    .notEmpty()
+    .withMessage("Passcode is required")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("Passcode must be 6 characters long"),
+  check("newPassword")
+    .notEmpty()
+    .withMessage("New password is required")
+    .isLength({ min: 6 })
+    .withMessage("New password must be at least 6 characters long"),
+];
 
-    const { email, recoveryId, passcode, newPassword } = request.body;
-
-    if (!email || !recoveryId || !passcode || !newPassword) {
-      return response
-        .status(400)
-        .json({ error: "Missing details in body request." });
+router.post(
+  "/new-password",
+  newPasswordValidationRules,
+  async (request, response, next) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
     }
 
-    // SEARCH FOR USER PASSWORD RECOVERY DOCUMENT BY ID
-    const foundUserPasscode = await UserPasswordRecoveryModel.findById(
-      recoveryId
-    ).exec();
-    if (!foundUserPasscode) {
-      return response
-        .status(404)
-        .json({ error: "Recovery ID not found or expired." });
+    try {
+      console.log("body is:");
+      console.log(request.body);
+
+      const { email, recoveryId, passcode, newPassword } = request.body;
+
+      // SEARCH FOR USER PASSWORD RECOVERY DOCUMENT BY ID
+      const foundUserPasscode = await UserPasswordRecoveryModel.findById(
+        recoveryId
+      ).exec();
+      if (!foundUserPasscode) {
+        return response
+          .status(404)
+          .json({ error: "Recovery ID not found or expired." });
+      }
+
+      // CHECK THE USERS PASSCODE MATCHES
+      if (passcode !== foundUserPasscode.passcode) {
+        return response.status(401).json({ error: "Incorrect passcode." });
+      }
+
+      // UPDATE THE PASSWORD FOR THE USER
+      const updateUserPassword = await UserModel.updateOne(
+        { email },
+        { password: newPassword }
+      ).exec();
+
+      if (!updateUserPassword) {
+        return response
+          .status(500)
+          .json({ error: "Password update failed. Please contact support." });
+      }
+
+      response.status(200).json({
+        message: "Password updated successfully.",
+      });
+    } catch (error) {
+      console.error("Error in new password route:", error);
+      next(error);
     }
-
-    // CHECK THE USERS PASSCODE MATCHES
-    if (passcode !== foundUserPasscode.passcode) {
-      return response.status(401).json({ error: "Incorrect passcode." });
-    }
-
-    // UPDATE THE PASSWORD FOR THE USER
-    const updateUserPassword = await UserModel.updateOne(
-      { email },
-      { password: newPassword }
-    ).exec();
-
-    if (!updateUserPassword) {
-      return response
-        .status(500)
-        .json({ error: "Password update failed. Please contact support." });
-    }
-
-    response.status(200).json({
-      message: "Password updated successfully.",
-    });
-  } catch (error) {
-    console.error("Error in new password route:", error);
-    next(error);
   }
-});
+);
 
 module.exports = router;

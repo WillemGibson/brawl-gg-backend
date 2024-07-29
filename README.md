@@ -55,7 +55,7 @@
 
     Endpoint name : User Check email for password to be reset
     Request type: POST
-    address: https://brawl-gg-backend.onrender.com/login/password-reset
+    address: https://brawl-gg-backend.onrender.com/login/forgot-password
     Authorization header required: None required
     Sample JSON:
     {
@@ -68,7 +68,7 @@
 
     Endpoint name : Check users recovery passcode
     Request type: POST
-    address: https://brawl-gg-backend.onrender.com/login/check-passcode
+    address: https://brawl-gg-backend.onrender.com/login/check-recovery-code
     Authorization header required: None required
     Sample JSON:
     {
