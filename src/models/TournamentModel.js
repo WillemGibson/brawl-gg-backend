@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
+const { PlayerStatsSchema } = require("./PlayerStatsModel");
 
-const TournamentSchema = new mongoose.Schema(
+const TournamentSchema = new Schema(
   {
     tournamentName: {
       type: String,
@@ -11,6 +13,10 @@ const TournamentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    teams: {
+      type: [String],
+      required: false,
     },
     game: {
       type: String,
@@ -32,12 +38,7 @@ const TournamentSchema = new mongoose.Schema(
       required: true,
       default: 10,
     },
-    playerStats: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "PlayerStats",
-      },
-    ],
+    playerStats: [PlayerStatsSchema],
     password: {
       type: String,
     },

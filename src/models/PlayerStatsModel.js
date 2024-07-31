@@ -9,11 +9,7 @@ const PlayerStatsSchema = new Schema({
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Player",
-  },
-  tournamentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Tournament",
+    ref: "User",
   },
   team: {
     type: String,
@@ -55,5 +51,4 @@ const PlayerStatsSchema = new Schema({
   },
 });
 
-const PlayerStatsModel = mongoose.model("PlayerStats", PlayerStatsSchema);
-module.exports = { PlayerStatsModel };
+module.exports = { PlayerStatsSchema };
