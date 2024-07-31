@@ -27,14 +27,12 @@ const UserSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tournament",
-        unique: false,
       },
     ],
     isAdmin: {
       type: Boolean,
       required: true,
       default: false,
-      unique: false,
     },
   },
   {
