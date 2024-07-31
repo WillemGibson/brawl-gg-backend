@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
+// MONGOOSE MODELS
+const { UserModel } = require("../models/UserModel");
+
 // JWT AUTHORIZATION FUNCTIONS
 const { userValidateJWTAndRefreshIt } = require("../utils/JWT/userJWT");
 
@@ -8,9 +11,15 @@ const { userValidateJWTAndRefreshIt } = require("../utils/JWT/userJWT");
 
 // GET ALL USERS
 router.get("/all", async (request, response, next) => {
-  response.json({
-    message: "User Router Get all users",
-  });
+  try {
+    const allUsers = await UserModel.findAll().exec();
+    response.json({
+      message: "User Router Get all users",
+      users: allUsers,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // GET ONE USER
