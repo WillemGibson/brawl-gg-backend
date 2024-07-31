@@ -14,18 +14,13 @@ const TournamentSchema = new mongoose.Schema(
     },
     game: {
       type: String,
-      require: true,
-      unique: false,
+      required: true,
     },
     gameType: {
       type: String,
-      require: false,
-      unique: false,
     },
     description: {
       type: String,
-      require: false,
-      unique: false,
     },
     minimumPlayers: {
       type: Number,
@@ -37,22 +32,24 @@ const TournamentSchema = new mongoose.Schema(
       required: true,
       default: 10,
     },
-    playerStats: [PlayerStatsSchema],
+    playerStats: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PlayerStats",
+      },
+    ],
     password: {
       type: String,
-      required: false,
-      unique: false,
     },
     joinlink: {
       type: String,
-      require: false,
-      unique: false,
     },
-    users: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "User",
-      required: false,
-    },
+    users: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     chats: [
       {
         type: mongoose.Schema.Types.ObjectId,
