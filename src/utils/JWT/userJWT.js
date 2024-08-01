@@ -4,28 +4,33 @@ dotenv.config();
 
 function createUserJWT(userDetailsToEncrypt) {
   return jwt.sign(userDetailsToEncrypt, process.env.USER_JWT_SECRET, {
-    expiresIn: "30m",
+    expiresIn: "7d",
   });
 }
 
 function userValidateJWTAndRefreshIt(request, response, next) {
   let suppliedToken = request.headers.jwt;
-  console.log(suppliedToken);
+  console.log("Supplied Token:", suppliedToken);
 
-  // jwt.verify(token, secret, callback function);
   jwt.verify(
     suppliedToken,
     process.env.USER_JWT_SECRET,
     (error, decodedJWT) => {
       if (error) {
-        console.log(error);
-        throw new Error("User not authenticated.");
+        console.error("JWT Verification Error:", error.message);
+        return response
+          .status(401)
+          .json({ message: "User not authenticated." });
       }
 
-      // VALID THE USER LOGIN CREDIENTALS
+      // Store user details in the request object
+      request.user = {
+        id: decodedJWT.userId,
+        isAdmin: decodedJWT.isAdmin,
+      };
 
-      // User doesn't have to manually sign in again if they're still using the app before the token expires.
-      let freshJWT = generateJWT({
+      // Create a fresh JWT
+      let freshJWT = createUserJWT({
         userId: decodedJWT.userId,
         username: decodedJWT.username,
         password: decodedJWT.password,
@@ -33,10 +38,9 @@ function userValidateJWTAndRefreshIt(request, response, next) {
       });
 
       request.freshJWT = freshJWT;
+      next();
     }
   );
-
-  next();
 }
 
 module.exports = {

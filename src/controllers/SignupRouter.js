@@ -42,7 +42,8 @@ router.post("/", signupValidationRules, async (request, response, next) => {
     // SEND RESPONSE TO CLIENT
     return response.status(201).json({
       message: "User created successfully",
-      user: newUser,
+      username: newUser.username,
+      email: newUser.email,
     });
   } catch (error) {
     // HANDLE DATABASE ERRORS

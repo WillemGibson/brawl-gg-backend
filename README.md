@@ -100,6 +100,14 @@
 
     Endpoint name : Get All Users
     Request Type: GET
+    address: https://brawl-gg-backend.onrender.com/user/dashboard
+    Authorization required: any JWT Authurization
+    successful response = {message, jwt, username, email, [yourTournaments]}. Admin JWT users also get extra data {Total users, Total tournaments, totalUserInTournaments}
+
+    ------------------------------------------------------------------------
+
+    Endpoint name : Get All Users
+    Request Type: GET
     address: https://brawl-gg-backend.onrender.com/user/all
     Authorization required: Admin user JWT Authurization
 
@@ -268,7 +276,7 @@ gameType,
 Description,
 minimum players,
 maximum players,
-player stats[{}, {}],
+player stats[schema],
 password,
 joinLink,
 users[],

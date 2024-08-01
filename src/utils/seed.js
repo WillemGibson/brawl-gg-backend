@@ -7,32 +7,30 @@ const seedData = async () => {
   try {
     await databaseConnect();
 
-    // Clear existing data
-    await databaseClear();
-
     // Create sample users
-    const users = await UserModel.insertMany([
+    const users = [
       {
         username: "player1",
         email: "player1@example.com",
-        password: "password",
+        password: "securepassword1",
       },
       {
         username: "player2",
         email: "player2@example.com",
         password: "password",
       },
-    ]);
+    ];
 
     // Create a sample tournament
     const tournament = new TournamentModel({
       tournamentName: "Apex Legends Championship",
-      author: users[0]._id,
+      author: "66ab9b47e8ca0d8babefc4a1",
+      teams: ["Alpha", "Bravo"],
       game: "Apex Legends",
       gameType: "Battle Royale",
       description: "Apex Legends Tournament",
       minimumPlayers: 2,
-      maximumPlayers: 20,
+      maximumPlayers: 10,
       password: "securepassword",
       joinlink: "http://example.com/join",
       users: users.map((u) => u._id),
@@ -71,22 +69,11 @@ const seedData = async () => {
     // Save the tournament
     await tournament.save();
 
-    // Create sample chats
-    const chats = await ChatsModel.insertMany([
-      {
-        message: "Good luck everyone!",
-        userId: users[0]._id,
-        tournamentId: tournament._id,
-      },
-      {
-        message: "Let's have a great game!",
-        userId: users[1]._id,
-        tournamentId: tournament._id,
-      },
-    ]);
+    await UserModel.updateMany(
+      { _id: { $in: "66ab9b47e8ca0d8babefc4a1" } },
+      { $push: { tournaments: tournament._id } }
+    );
 
-    // Update tournament with chats
-    tournament.chats = chats.map((chat) => chat._id);
     await tournament.save();
 
     console.log("Database seeded!");

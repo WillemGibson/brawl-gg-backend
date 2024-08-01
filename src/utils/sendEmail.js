@@ -10,14 +10,11 @@ const REDIRECT_URI = "https://developers.google.com/oauthplayground";
 const MY_EMAIL = process.env.MY_EMAIL;
 
 // REQUEST TO GOOGLE FOR REFRESH TOKEN
-const oAuth2Client = new google.auth.OAuth2(
+let oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
   CLIENT_SECRET,
   REDIRECT_URI
 );
-
-// ADD REFRESH TOKEN TO oAuth2Client
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 // DECLARE THE SEND EMAIL FUNCTION WITH EMAIL RECIPIENT, MORE INFORMATION CAN BE PASSED SUCH AS TEMPLATES OR ATTACHMENTS, ETC.
 const sendEmail = async (
@@ -26,6 +23,8 @@ const sendEmail = async (
   recoveryCode,
   recipientUsername
 ) => {
+  // ADD REFRESH TOKEN TO oAuth2Client
+  oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
   try {
     // GET THE ACCESS TOKEN TO USE YOUR EMAIL
     const ACCESS_TOKEN = await oAuth2Client.getAccessToken();

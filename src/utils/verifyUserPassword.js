@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 
 // Compare raw password to encrypted password
 async function comparePasswords(plaintextPassword, encryptedPassword) {
+  console.log(plaintextPassword, encryptedPassword);
   try {
     const doesPasswordMatch = await bcrypt.compare(
       plaintextPassword,
