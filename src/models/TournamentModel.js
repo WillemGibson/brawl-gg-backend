@@ -4,26 +4,27 @@ const { PlayerStatsSchema } = require("./PlayerStatsModel");
 
 const TournamentSchema = new Schema(
   {
-    tournamentName: {
-      type: String,
-      unique: true,
-      required: true,
-    },
-    author: {
+    tournamentName: { type: String, required: true },
+    authorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+    author: {
+      type: String,
       required: true,
     },
     teams: {
       type: [String],
-      required: false,
+      default: [""],
     },
+    gameStats: [String],
     game: {
       type: String,
       required: true,
     },
     gameType: {
       type: String,
+      required: true,
     },
     description: {
       type: String,
@@ -31,20 +32,18 @@ const TournamentSchema = new Schema(
     minimumPlayers: {
       type: Number,
       required: true,
-      default: 2,
     },
     maximumPlayers: {
       type: Number,
       required: true,
-      default: 10,
     },
-    playerStats: [PlayerStatsSchema],
     password: {
       type: String,
     },
     joinlink: {
       type: String,
     },
+    playerStats: [PlayerStatsSchema],
     users: [
       {
         type: mongoose.Schema.Types.ObjectId,

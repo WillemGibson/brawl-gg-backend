@@ -1,86 +1,89 @@
-const { TournamentModel } = require("../models/TournamentModel");
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const { UserModel } = require("../models/UserModel");
-const { ChatsModel } = require("../models/ChatsModel");
+const { TournamentModel } = require("../models/TournamentModel");
+const { createTournament } = require("./createTournament");
 const { databaseConnect, databaseClose, databaseClear } = require("./database");
 
 const seedData = async () => {
   try {
+    // Connect to the database
     await databaseConnect();
 
-    // Create sample users
+    // Clear existing data (optional, use if you want to start fresh)
+    await databaseClear();
+
+    // Seed users
     const users = [
       {
-        username: "player1",
-        email: "player1@example.com",
-        password: "securepassword1",
+        username: "username1",
+        email: "user1@example.com",
+        password: "securepassword",
+        profileImage: "profile1.jpg",
+        isAdmin: false,
       },
       {
-        username: "player2",
-        email: "player2@example.com",
-        password: "password",
+        username: "username2",
+        email: "user2@example.com",
+        password: "securepassword",
+        profileImage: "profile2.jpg",
+        isAdmin: false,
       },
     ];
 
-    // Create a sample tournament
-    const tournament = new TournamentModel({
+    const userDocs = await UserModel.insertMany(users);
+
+    const user1_Id = userDocs[0]._id;
+    const user2_Id = userDocs[1]._id;
+
+    // Define tournament data
+    const tournamentData = {
       tournamentName: "Apex Legends Championship",
-      author: "66ab9b47e8ca0d8babefc4a1",
-      teams: ["Alpha", "Bravo"],
+      authorId: user1_Id,
+      author: "Ben",
+      teams: [""],
+      gameStats: [
+        "playerName",
+        "wins",
+        "losses",
+        "draws",
+        "kills",
+        "deaths",
+        "assists",
+        "score",
+      ],
       game: "Apex Legends",
       gameType: "Battle Royale",
       description: "Apex Legends Tournament",
       minimumPlayers: 2,
       maximumPlayers: 10,
       password: "securepassword",
-      joinlink: "http://example.com/join",
-      users: users.map((u) => u._id),
+      joinlink: "https://brawl.gg/join/:JWT",
+      users: [user1_Id, user2_Id],
       playerStats: [
         {
-          playerName: users[0].username,
-          userId: users[0]._id,
-          team: "Alpha",
-          commonStats: {
-            wins: 5,
-            losses: 2,
-            draws: 1,
-            kills: 50,
-            deaths: 20,
-            assists: 30,
-          },
-          gameSpecificStats: { damageDealt: 5000, headshots: 20 },
+          userId: user1_Id,
+          playerName: "username1",
+          team: "",
         },
         {
-          playerName: users[1].username,
-          userId: users[1]._id,
-          team: "Bravo",
-          commonStats: {
-            wins: 3,
-            losses: 4,
-            draws: 1,
-            kills: 30,
-            deaths: 25,
-            assists: 20,
-          },
-          gameSpecificStats: { damageDealt: 3000, headshots: 15 },
+          userId: user2_Id,
+          playerName: "username2",
+          team: "",
         },
       ],
-    });
+    };
 
-    // Save the tournament
-    await tournament.save();
+    await createTournament(tournamentData);
 
-    await UserModel.updateMany(
-      { _id: { $in: "66ab9b47e8ca0d8babefc4a1" } },
-      { $push: { tournaments: tournament._id } }
-    );
-
-    await tournament.save();
-
-    console.log("Database seeded!");
-    await databaseClose();
+    console.log("Database seeded successfully!");
   } catch (error) {
     console.error("Error seeding data:", error);
+  } finally {
+    // Close the database connection
+    await databaseClose();
   }
 };
 
+// Run the seed data function
 seedData();
