@@ -11,7 +11,7 @@ const seedData = async () => {
     await databaseConnect();
 
     // Clear existing data (optional, use if you want to start fresh)
-    await databaseClear();
+    // await databaseClear();
 
     // Seed users
     const users = [

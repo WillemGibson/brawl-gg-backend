@@ -62,19 +62,16 @@ router.post("/", loginValidationRules, async (request, response, next) => {
 
     // CREATE A JWT FOR THE USER
     const newJwt = createUserJWT({ userId: foundUser._id });
-    return response
-      .status(200)
-      .json({
-        username: foundUser.username,
-        email: foundUser.email,
-        jwt: newJwt,
-      });
+    return response.status(200).json({
+      username: foundUser.username,
+      email: foundUser.email,
+      jwt: newJwt,
+    });
   } catch (error) {
     console.error("Error in user login route:", error);
     return response
       .status(500)
       .json({ error: "Internal server error. Please try again." });
-    next(error);
   }
 });
 

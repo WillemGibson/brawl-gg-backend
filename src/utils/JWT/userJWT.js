@@ -10,7 +10,6 @@ function createUserJWT(userDetailsToEncrypt) {
 
 function userValidateJWTAndRefreshIt(request, response, next) {
   let suppliedToken = request.headers.jwt;
-  console.log("Supplied Token:", suppliedToken);
 
   jwt.verify(
     suppliedToken,
