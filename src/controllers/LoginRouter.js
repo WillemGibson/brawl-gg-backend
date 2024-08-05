@@ -37,11 +37,14 @@ router.post("/", loginValidationRules, async (request, response, next) => {
 
   try {
     const { email, password } = request.body;
-
+    console.log(email, password);
     // SEARCH FOR USER DOCUMENT BY EMAIL
     const foundUser = await UserModel.findOne({ email }).exec();
+    console.log(foundUser);
     if (!foundUser) {
-      return response.status(401).json({ error: "Invalid credentials." });
+      return response
+        .status(401)
+        .json({ error: "Invalid credentials. Couldn't Find User" });
     }
 
     // CHECK THE USER'S HASHED PASSWORD
@@ -49,21 +52,26 @@ router.post("/", loginValidationRules, async (request, response, next) => {
       password,
       foundUser.password
     );
+
+    console.log(isPasswordCorrect);
     if (!isPasswordCorrect) {
-      return response.status(401).json({ error: "Invalid credentials." });
+      return response
+        .status(401)
+        .json({ error: "Invalid credentials. Wrong Password" });
     }
 
     // CREATE A JWT FOR THE USER
     const newJwt = createUserJWT({ userId: foundUser._id });
-    return response
-      .status(200)
-      .json({ username: foundUser.username, jwt: newJwt });
+    return response.status(200).json({
+      username: foundUser.username,
+      email: foundUser.email,
+      jwt: newJwt,
+    });
   } catch (error) {
     console.error("Error in user login route:", error);
     return response
       .status(500)
       .json({ error: "Internal server error. Please try again." });
-    next(error);
   }
 });
 

@@ -98,33 +98,30 @@
 
 ### User
 
+    Endpoint name : Get User Dashboard
+    Request Type: GET
+    address: https://brawl-gg-backend.onrender.com/user/dashboard
+    Authorization required: any JWT Authurization
+    No Body JSON required
+    successful response = {message, jwt, username, email, [yourTournaments]}. Admin JWT users also get extra data {Total users, Total tournaments, totalUserInTournaments}
+
+    ------------------------------------------------------------------------
+
     Endpoint name : Get All Users
     Request Type: GET
     address: https://brawl-gg-backend.onrender.com/user/all
     Authorization required: Admin user JWT Authurization
+    successful response = all user documents (This is an Admin Route)
 
     ------------------------------------------------------------------------
 
-    Endpoint name : Get One User
+    Endpoint name : Get One User By Email
     Request Type: GET
     address:
     https://brawl-gg-backend.onrender.com/user/:email
     Authorization header required: JWT Created by User
+    successful response = One user document that with matching email (This is an Admin Route)
 
-
-    -------------------------------------------------------------------------
-
-    Endpoint name : Create User
-    Request type: POST
-    address: https://brawl-gg-backend.onrender.com/user
-    Authorization header required: None
-    Sample JSON:
-    {
-    "username": "Ben",
-    "email": "ben@email.com.au",
-    "password": "Coderacademy1!",
-    "profile picture": "image",
-    }
 
     -------------------------------------------------------------------------
 
@@ -140,7 +137,10 @@
     "password": "Coderacademy1!",
     "profile picture": "image",
     }
-
+    Successful Response = {
+        message: "User updated successfully",
+        jwt: JWT,
+      }
     Optional inputs = ["name", "email", "password", "profile picture"]
 
     ----------------------------------------------------------------------
@@ -150,6 +150,7 @@
     address:
     https://brawl-gg-backend.onrender.com/user
     Authorization required: JWT Created by User
+    Successful Response = { message: "User deleted successfully" }
 
 ### Tournaments
 
@@ -268,7 +269,7 @@ gameType,
 Description,
 minimum players,
 maximum players,
-player stats[{}, {}],
+player stats[schema],
 password,
 joinLink,
 users[],

@@ -21,8 +21,6 @@ const validateJoinGameJWT = (request, response, next) => {
           .json({ message: "User not authenticated." });
       }
 
-      // VALID THE TOURNAMENT PASSWORD
-
       // Attach the decoded JWT to the request object
       request.decodedJWT = decodedJWT;
       next();

@@ -41,18 +41,23 @@ const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.pre("save", async function (next) {
-  const user = this;
-
-  if (!user.isModified("password")) {
+  if (!this.isModified("password")) {
     return next();
   }
 
-  // TODO: encryption
-  const hash = await bcrypt.hash(this.password, 10);
+  try {
+    // Hash the password with a salt round of 10
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(this.password, salt);
 
-  this.password = hash;
+    // Set the hashed password to the user model
+    this.password = hash;
 
-  next();
+    console.log(this.password);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 const UserModel = mongoose.model("User", UserSchema);

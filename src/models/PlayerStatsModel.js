@@ -1,54 +1,30 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const PlayerStatsSchema = new Schema({
-  playerName: {
-    type: String,
-    required: true,
-    default: "player",
-  },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-  team: {
-    type: String,
-    default: "1",
-  },
-  commonStats: {
-    wins: {
-      type: Number,
-      default: 0,
+const PlayerStatsSchema = new Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    losses: {
-      type: Number,
-      default: 0,
+    playerName: {
+      type: String,
+      required: true,
     },
-    draws: {
-      type: Number,
-      default: 0,
+    team: {
+      type: String,
+      default: "",
     },
-    kills: {
-      type: Number,
-      default: 0,
-    },
-    deaths: {
-      type: Number,
-      default: 0,
-    },
-    assists: {
-      type: Number,
-      default: 0,
+    stats: {
+      type: Map,
+      of: Number,
+      default: {},
     },
   },
-  gameSpecificStats: {
-    type: Object,
-    required: false,
-  },
-  lastUpdated: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 module.exports = { PlayerStatsSchema };
