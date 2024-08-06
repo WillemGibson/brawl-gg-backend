@@ -21,11 +21,22 @@ function userValidateJWTAndRefreshIt(request, response, next) {
           .status(401)
           .json({ message: "User not authenticated." });
       }
+      console.log(decodedJWT);
+
+      if (
+        !decodedJWT.userId ||
+        !decodedJWT.username ||
+        decodedJWT.isAdmin === undefined
+      ) {
+        return response.status(401).json({ message: "Invalid JWT payload." });
+      }
 
       // Store user details in the request object
+
       request.user = {
         id: decodedJWT.userId,
         isAdmin: decodedJWT.isAdmin,
+        username: decodedJWT.username,
       };
 
       // Create a fresh JWT

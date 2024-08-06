@@ -61,7 +61,11 @@ router.post("/", loginValidationRules, async (request, response, next) => {
     }
 
     // CREATE A JWT FOR THE USER
-    const newJwt = createUserJWT({ userId: foundUser._id });
+    const newJwt = createUserJWT({
+      userId: foundUser._id,
+      username: foundUser.username,
+      isAdmin: foundUser.isAdmin,
+    });
     return response.status(200).json({
       username: foundUser.username,
       email: foundUser.email,
