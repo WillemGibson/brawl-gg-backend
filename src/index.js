@@ -15,7 +15,7 @@ async function startServer() {
     socketConnect(server);
 
     // DECLARE THE PORT
-    const PORT = process.env.PORT || 8080;
+    const PORT = process.env.PORT || 3001;
 
     // START LISTENING FOR HTTP REQUESTS
     server.listen(PORT, () => {
