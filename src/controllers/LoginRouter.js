@@ -30,7 +30,7 @@ const loginValidationRules = [
 ];
 
 router.post("/", loginValidationRules, async (request, response, next) => {
-  console.log("Received login request:", req.body);
+  console.log("Received login request:", request.body);
   const errors = validationResult(request);
   if (!errors.isEmpty()) {
     return response.status(400).json({ errors: errors.array() });
