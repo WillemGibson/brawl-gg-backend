@@ -192,18 +192,17 @@
     Authorization header required: Any JWT
     Sample JSON:
     {
-    tournamentName: "String",
-    author: "mongoose OBJECT",
-    Game: "String",
-    "gameType": "string",
-    "Description": "string",
-    "minimum players": int,
-    "maximum players": int,
-    "player stats": ["mongoose OBJECT", "mongoose OBJECT"],
-    "password": "string,
-    "joinLink": "string",
-    "users": ["mongoose OBJECT", "mongoose OBJECT"],
-    "chats": ["mongoose OBJECT"],
+        "tournamentName": "Cup2024",
+        "author": "JohnDoe",
+        "teams": ["TeamA", "TeamB", "TeamC", "TeamD"],
+        "game": "Chess",
+        "gameStats": ["Wins", "Losses", "Draws"],
+        "gameType": "Classic",
+        "description": "Annual Chess Tournament",
+        "minimumPlayers": 2,
+        "maximumPlayers": 50,
+        "password": "securepass123",
+        "isAuthorPlayer": true
     }
 
     -------------------------------------------------------------------------
@@ -214,21 +213,20 @@
     Authorization required: JWT User that created tournament
     Sample JSON:
     {
-    "tournamentName": "String",
-    'author': "mongoose OBJECT",
-    "game": "String",
-    "gameType": "string",
-    "description": "string",
-    "minimum players": int,
-    "maximum players": int,
-    "player stats": ["mongoose OBJECT", "mongoose OBJECT"],
-    "password": "string",
-    "joinLink": "string",
-    "users": ["mongoose OBJECT", "mongoose OBJECT"],
-    "chats": ["mongoose OBJECT"]
+        "tournamentName": "Cup2024",
+        "author": "JohnDoe",
+        "teams": ["TeamA", "TeamB", "TeamC", "TeamD"],
+        "game": "Chess",
+        "gameStats": ["Wins", "Losses", "Draws"],
+        "gameType": "Classic",
+        "description": "Annual Chess Tournament",
+        "minimumPlayers": 2,
+        "maximumPlayers": 50,
+        "password": "securepass123",
+        "isAuthorPlayer": true
     }
 
-    Optional inputs = ["tournamentName", "author", "game", "gameType", "description", "min player", "max player", "player stats", "password", "users", "chats"]
+    Optional inputs = ["tournamentName", "author", "game", "gameStats", "gameType", "description", "min player", "max player", "password"]
 
     ----------------------------------------------------------------------
 
@@ -245,7 +243,7 @@ email,
 password,
 profile image,
 tournaments,
-isAdmin (An Admin can only be created by another admin)
+isAdmin (An Admin can only be created manually)
 }
 
 userPasswordRecovery {
@@ -265,6 +263,7 @@ tournament {
 tournamentName,
 author,
 Game,
+GameStats,
 gameType,
 Description,
 minimum players,
