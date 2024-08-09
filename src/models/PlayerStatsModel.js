@@ -8,7 +8,7 @@ const PlayerStatsSchema = new Schema(
       ref: "User",
       required: true,
     },
-    playerName: {
+    player: {
       type: String,
       required: true,
     },

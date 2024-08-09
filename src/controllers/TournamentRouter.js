@@ -196,7 +196,7 @@ router.post(
       if (isAuthorPlayer) {
         const authorPlayerStats = {
           userId: authorId,
-          playerName: author,
+          player: author,
           team: teams[0] || "",
           stats: gameStats.reduce((acc, stat) => {
             acc[stat] = 0;
@@ -205,6 +205,9 @@ router.post(
         };
         playerStats.push(authorPlayerStats);
       }
+
+      // ADD THE PLAYER TO THE FRONT OF THE TOURNAMENT GAMESTATS
+      gameStats.unshift("player");
 
       // CREATE THE NEW TOURNMANET MODEL INSTANCE
       const newTournament = new TournamentModel({
