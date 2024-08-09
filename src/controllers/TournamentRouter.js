@@ -117,6 +117,15 @@ router.get(
       tournament.playerStats.push(userPlayerStats);
       await tournament.save();
 
+      // ADD THE TOURNAMENT TO THE USER'S DOCUMENT
+      const user = await UserModel.findById(userData.id);
+      if (!user) {
+        return response.status(404).json({ message: "User not found" });
+      }
+
+      user.tournaments.push(tournamentId);
+      await user.save();
+
       // REDIRECT THE USER TO THE TOURNAMENT PAGE
       response.redirect(`http://brawls.io/tournament/${tournamentId}`);
     } catch (error) {
