@@ -13,6 +13,7 @@ const {
 
 // TOURNAMENT MODEL
 const { TournamentModel } = require("../models/TournamentModel");
+const { UserModel } = require("../models/UserModel");
 
 //-----------------------------ROUTES-------------------------------//
 
@@ -239,7 +240,7 @@ router.post(
       await savedTournament.save();
 
       // UPDATE THE USER'S DOCUMENT TO INCLUDE THIS TOURNAMENT
-      await UserSchema.findByIdAndUpdate(
+      await UserModel.findByIdAndUpdate(
         authorId,
         { $push: { tournaments: savedTournament._id } },
         { new: true }
