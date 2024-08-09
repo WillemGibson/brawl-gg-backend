@@ -172,8 +172,8 @@ router.post(
       return response.status(400).json({ errors: errors.array() });
     }
 
-    // GET ALL OF THE DATA FROM THE JSON BODY
     try {
+      // GET ALL OF THE DATA FROM THE JSON BODY
       const {
         tournamentName,
         author,
@@ -209,7 +209,7 @@ router.post(
       // ADD THE PLAYER TO THE FRONT OF THE TOURNAMENT GAMESTATS
       gameStats.unshift("player");
 
-      // CREATE THE NEW TOURNMANET MODEL INSTANCE
+      // CREATE THE NEW TOURNAMENT MODEL INSTANCE
       const newTournament = new TournamentModel({
         tournamentName,
         authorId,
@@ -234,12 +234,19 @@ router.post(
         password,
       });
 
-      // SAVE IT TO THE DATABASE
+      // SAVE THE JOIN LINK TO THE TOURNAMENT
       savedTournament.joinlink = `https://brawlz.me/tournament/join/${joinLink}`;
       await savedTournament.save();
 
+      // UPDATE THE USER'S DOCUMENT TO INCLUDE THIS TOURNAMENT
+      await UserSchema.findByIdAndUpdate(
+        authorId,
+        { $push: { tournaments: savedTournament._id } },
+        { new: true }
+      );
+
       response.json({
-        message: "Tournament created successfully",
+        message: "Tournament created successfully and added to user",
         tournament: savedTournament,
       });
     } catch (error) {
