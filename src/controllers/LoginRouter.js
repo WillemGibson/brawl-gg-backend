@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
 
 // MONGOOSE MODELS
@@ -240,13 +241,17 @@ router.post(
         return response.status(401).json({ error: "Incorrect passcode." });
       }
 
+      // HASH THE NEW PASSWORD BEFORE UPDATING
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+
       // UPDATE THE PASSWORD FOR THE USER
       const updateUserPassword = await UserModel.updateOne(
         { email },
-        { password: newPassword }
+        { password: hashedPassword }
       ).exec();
 
-      if (!updateUserPassword) {
+      if (updateUserPassword.nModified === 0) {
         return response
           .status(500)
           .json({ error: "Password update failed. Please contact support." });
