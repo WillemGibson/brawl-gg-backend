@@ -13,6 +13,7 @@ const {
 
 // TOURNAMENT MODEL
 const { TournamentModel } = require("../models/TournamentModel");
+const { UserModel } = require("../models/UserModel");
 
 //-----------------------------ROUTES-------------------------------//
 
@@ -105,7 +106,7 @@ router.get(
       // ADD THE USER TO THE TOURNAMENT'S PLAYER STATS
       const userPlayerStats = {
         userId: userData.id,
-        playerName: userData.username,
+        player: userData.username,
         team: tournament.teams[0] || "",
         stats: tournament.gameStats.reduce((acc, stat) => {
           acc[stat] = 0;
@@ -115,6 +116,15 @@ router.get(
 
       tournament.playerStats.push(userPlayerStats);
       await tournament.save();
+
+      // ADD THE TOURNAMENT TO THE USER'S DOCUMENT
+      const user = await UserModel.findById(userData.id);
+      if (!user) {
+        return response.status(404).json({ message: "User not found" });
+      }
+
+      user.tournaments.push(tournamentId);
+      await user.save();
 
       // REDIRECT THE USER TO THE TOURNAMENT PAGE
       response.redirect(`http://brawls.io/tournament/${tournamentId}`);
@@ -172,8 +182,8 @@ router.post(
       return response.status(400).json({ errors: errors.array() });
     }
 
-    // GET ALL OF THE DATA FROM THE JSON BODY
     try {
+      // GET ALL OF THE DATA FROM THE JSON BODY
       const {
         tournamentName,
         author,
@@ -209,7 +219,7 @@ router.post(
       // ADD THE PLAYER TO THE FRONT OF THE TOURNAMENT GAMESTATS
       gameStats.unshift("player");
 
-      // CREATE THE NEW TOURNMANET MODEL INSTANCE
+      // CREATE THE NEW TOURNAMENT MODEL INSTANCE
       const newTournament = new TournamentModel({
         tournamentName,
         authorId,
@@ -234,12 +244,19 @@ router.post(
         password,
       });
 
-      // SAVE IT TO THE DATABASE
+      // SAVE THE JOIN LINK TO THE TOURNAMENT
       savedTournament.joinlink = `https://brawlz.me/tournament/join/${joinLink}`;
       await savedTournament.save();
 
+      // UPDATE THE USER'S DOCUMENT TO INCLUDE THIS TOURNAMENT
+      await UserModel.findByIdAndUpdate(
+        authorId,
+        { $push: { tournaments: savedTournament._id } },
+        { new: true }
+      );
+
       response.json({
-        message: "Tournament created successfully",
+        message: "Tournament created successfully and added to user",
         tournament: savedTournament,
       });
     } catch (error) {
