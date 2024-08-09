@@ -106,7 +106,7 @@ router.get(
       // ADD THE USER TO THE TOURNAMENT'S PLAYER STATS
       const userPlayerStats = {
         userId: userData.id,
-        playerName: userData.username,
+        player: userData.username,
         team: tournament.teams[0] || "",
         stats: tournament.gameStats.reduce((acc, stat) => {
           acc[stat] = 0;
