@@ -100,7 +100,7 @@ router.get(
       if (isUserAlreadyInTournament) {
         return response
           .status(400)
-          .json({ message: "User is already in the tournament!" });
+          .json({ message: "User is already in the tournament!", TournamentId: tournamentId });
       }
 
       // ADD THE USER TO THE TOURNAMENT'S PLAYER STATS
