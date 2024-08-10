@@ -36,7 +36,7 @@ router.get(
 
       // EXTRACT NECESSARY FIELDS ONLY
       let userResponseData = {
-        id: foundUser.userId,
+        id: userId,
         username: foundUser.username,
         email: foundUser.email,
         yourTournaments: foundUser.tournaments,
